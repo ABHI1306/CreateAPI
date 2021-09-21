@@ -1,4 +1,5 @@
 import requests
+import json
 
 BASE_URL = "http://127.0.0.1:8000/"
 
@@ -17,4 +18,15 @@ def get_list():
             print(r2.json())
     return data
 
-print(get_list())
+def create_update():
+    new_data = {
+        'user': 1,
+        'content': "Another new cool update" 
+    }
+    r = requests.delete(BASE_URL + ENDPOINT,data=new_data)
+    print(r.headers)
+    if(r.status_code == requests.codes.ok):
+        return r.json()
+    return r.text
+
+print(create_update())
