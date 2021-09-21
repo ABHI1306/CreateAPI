@@ -12,11 +12,8 @@ class UpdateQuerySet(models.QuerySet):
     #     return serialize('json',qs,fields=('user','content','image'))
 
     def serialize(self):
-        qs = self
-        final_array = []
-        for obj in qs:
-            final_array.append(obj.serialize())
-        return json.dumps(final_array)
+        list_val = list(self.values("user","content","image","id"))
+        return json.dumps(list_val)
 
 class UpdateManager(models.Manager):
     def get_queryset(self):
@@ -35,7 +32,16 @@ class Update(models.Model):
         return self.content or ""
     
     def serialize(self):
-        json_data = serialize("json",[self],fields=('user','content','image'))
-        struct = json.loads(json_data)
-        data = json.dumps(struct[0]['fields'])
+        try:
+            image = self.image.url
+        except:
+            image = ""
+
+        data = {
+            "id": self.id,
+            "content": self.content,
+            "user": self.user.id,
+            "image": image
+        }
+        data = json.dumps(data)
         return data
