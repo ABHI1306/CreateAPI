@@ -17,8 +17,8 @@ class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         return self.render_to_response(json_data)
 
     def post(self,request,*args,**kwrgs):
-        json_data = {}
-        return self.render_to_response(json_data)
+        json_data = json.dumps({"message":"Not allowed, please use the /api/updates/ endpoint."})
+        return self.render_to_response(json_data,status=403)
 
     def put(self,request,*args,**kwrgs):
         json_data = {}
