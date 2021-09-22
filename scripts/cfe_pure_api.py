@@ -23,12 +23,36 @@ def create_update():
         'user': 1,
         'content': "Another more cool content" 
     }
-    r = requests.post(BASE_URL + ENDPOINT + "1" + "/",data=new_data)
+    r = requests.post(BASE_URL + ENDPOINT + "1" + "/",data=json.dumps(new_data))
     print(r.headers)
     print(r.status_code)
     if(r.status_code == requests.codes.ok):
         return r.json()
     return r.text
 
-print(create_update())
+#print(create_update())
 #print(get_list())
+
+def do_obj_update():
+    new_data = {
+        'content': "New obj data" 
+    }
+    r = requests.put(BASE_URL + ENDPOINT + "1" + "/",data=json.dumps(new_data))
+    print(r.headers)
+    print(r.status_code)
+    if(r.status_code == requests.codes.ok):
+        return r.json()
+    return r.text
+
+def do_obj_delete():
+    new_data = {
+        'content': "New obj data" 
+    }
+    r = requests.delete(BASE_URL + ENDPOINT + "1" + "/")
+    print(r.headers)
+    print(r.status_code)
+    if(r.status_code == requests.codes.ok):
+        return r.json()
+    return r.text
+
+print(do_obj_update())
