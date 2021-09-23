@@ -14,6 +14,8 @@ class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
     is_json = True
 
     def get_object(self,id=None):
+        if id is None:
+            return None
         qs = UpdateModel.objects.filter(id=id)
         if qs.count() == 1:
             return qs.first()
@@ -31,19 +33,21 @@ class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         json_data = json.dumps({"message":"Not allowed, please use the /api/updates/ endpoint."})
         return self.render_to_response(json_data,status=403)
 
-    def put(self,request,id,*args,**kwrgs):
+    def put(self,request,*args,**kwrgs):
         valid_json = is_json(request.body)
         if not valid_json:
             error_data = json.dumps({"message":"Invalid data sent, please send using JSON."})
             return self.render_to_response(error_data,status=400)       
-        
-        obj = self.get_object(id=id)
-        if obj is None:
-            error_data = json.dumps({"message":"Update not found"})
-            return self.render_to_response(error_data,status=404)
-        new_data = {}
-        data = json.loads(obj.serialize())
         passed_data = json.loads(request.body)
+        passed_id = passed_data.get('id',None)
+
+        obj = self.get_object(id=passed_id)
+        if obj is None:
+            error_data = json.dumps({"message":"Object not found"})
+            return self.render_to_response(error_data,status=404)
+        #new_data = {}
+        data = json.loads(obj.serialize())
+        
         for key,value in passed_data.items():
             data[key] = value
         form = UpdateModelForm(data, instance=obj)
@@ -60,10 +64,18 @@ class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         return self.render_to_response(json_data)
 
     def delete(self,request,id,*args,**kwrgs):
-        obj = self.get_object(id=id)
+        valid_json = is_json(request.body)
+        if not valid_json:
+            error_data = json.dumps({"message":"Invalid data sent, please send using JSON."})
+            return self.render_to_response(error_data,status=400)       
+        passed_data = json.loads(request.body)
+        passed_id = passed_data.get('id',None)
+
+        obj = self.get_object(id=passed_id)
         if obj is None:
-            error_data = json.dumps({"message":"Update not found"})
+            error_data = json.dumps({"message":"Object not found"})
             return self.render_to_response(error_data,status=404)
+        
         deleted_, item_deleted = obj.delete()
         if deleted_ == 1:
             json_data = json.dumps({"message":"Successfully deleted..."})
@@ -73,9 +85,21 @@ class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
 
 class UpdateModelListAPIView(HttpResponseMixin,CSRFExemptMixin,View):
     is_json = True
+    queryset = None
+
+    def get_queryset(self):
+        qs = UpdateModel.objects.all()
+        self.queryset = qs
+        return qs
+
+    def get_object(self,id=None):
+        qs = self.get_queryset().filter(id=id)
+        if qs.count() == 1:
+            return qs.first()
+        return None
     
     def get(self,request,*args,**kwrgs):
-        qs = UpdateModel.objects.all()
+        qs = self.get_queryset()
         json_data = qs.serialize()
         return self.render_to_response(json_data)
  
@@ -97,8 +121,9 @@ class UpdateModelListAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         data = {"message":"Not Allowed"}
         return self.render_to_response(data,status=400)
 
-    def delete(self,request,*args,**kwrgs):
-        data = json.dumps({"message":"You cannot delete an entire list."})
-        status_code = 403
-        return self.render_to_response(data,status=status_code)
+    # def delete(self,request,*args,**kwrgs):
+    #     data = json.dumps({"message":"You cannot delete an entire list."})
+    #     status_code = 403
+    #     return self.render_to_response(data,status=status_code)
+
 
