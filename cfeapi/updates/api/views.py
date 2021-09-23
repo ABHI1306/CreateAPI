@@ -8,6 +8,8 @@ import json
 from cfeapi.mixins import HttpResponseMixin
 from updates.forms import UpdateModelForm
 
+from .utils import is_json
+
 class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
     is_json = True
 
@@ -34,7 +36,10 @@ class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         if obj is None:
             error_data = json.dumps({"message":"Update not found"})
             return self.render_to_response(error_data,status=404)
-        print(request.body)
+        valid_json = is_json(request.body)
+        if not valid_json:
+            error_data = json.dumps({"message":"Invalid data sent, please send using JSON."})
+            return self.render_to_response(error_data,status=400)       
         new_data = json.loads(request.body)
         print(new_data['content'])
         json_data = json.dumps({"message":"Something..."})
@@ -45,7 +50,7 @@ class UpdateModelDetailAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         if obj is None:
             error_data = json.dumps({"message":"Update not found"})
             return self.render_to_response(error_data,status=404)
-        json_data = {}
+        json_data = json.dumps({"message":"Something..."})
         return self.render_to_response(json_data,status=403)
 
 class UpdateModelListAPIView(HttpResponseMixin,CSRFExemptMixin,View):
@@ -57,11 +62,17 @@ class UpdateModelListAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         return self.render_to_response(json_data)
  
     def post(self,request,*args,**kwrgs):
-        form = UpdateModelForm(request.POST)
+        valid_json = is_json(request.body)
+        if not valid_json:
+            error_data = json.dumps({"message":"Invalid data sent, please send using JSON."})
+            return self.render_to_response(error_data,status=400)       
+        data = json.loads(request.body)
+        form = UpdateModelForm(data)
         if(form.is_valid()):
             obj = form.save(commit=True)
             obj_data = obj.serialize()
             return self.render_to_response(obj_data,status=201)
+        data = json.loads(request.body)
         if(form.errors):
             data = json.dumps(form.errors)
             return self.render_to_response(data,status=400)
@@ -69,7 +80,7 @@ class UpdateModelListAPIView(HttpResponseMixin,CSRFExemptMixin,View):
         return self.render_to_response(data,status=400)
 
     def delete(self,request,*args,**kwrgs):
-        data = json.dumps({"message":"You can not delete list"})
+        data = json.dumps({"message":"You cannot delete an entire list."})
         status_code = 403
         return self.render_to_response(data,status=status_code)
 
