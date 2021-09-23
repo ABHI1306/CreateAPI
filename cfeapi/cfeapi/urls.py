@@ -4,6 +4,7 @@ from updates.views import json_example_view, JsonCBV, JsonCBV2, SerializedDetail
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/status/', include('status.api.urls')),
     path('api/updates/', include('updates.api.urls')),
 
     # path('api/updates/', include('updates.api.urls')),

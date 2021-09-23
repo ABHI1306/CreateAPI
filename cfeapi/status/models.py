@@ -9,7 +9,7 @@ class StatusQuerySet(models.QuerySet):
 
 class StatusManager(models.Manager):
     def get_queryset(self):
-        return StatusQuerySet(self.models,using=self._db)
+        return StatusQuerySet(self.model,using=self._db)
 
 class Status(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)

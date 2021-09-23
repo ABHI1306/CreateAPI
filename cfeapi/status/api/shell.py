@@ -48,5 +48,16 @@ print(create_obj)
 
 obj = Status.objects.last()
 get_data_serializer = StatusSerializer(obj)
-print(obj.delete)
+print(obj.delete())
+
+from rest_framework import serializers
+class CustomSerializer(serializers.Serializer):
+    content = serializers.CharField()
+    email = serializers.EmailField()
+
+data = {'email':'hello@@teamcfe.com', 'content':'please delete me'}
+create_obj_serializer = CustomSerializer(data=data)
+if create_obj_serializer.is_valid():
+    valid_data = create_obj_serializer.data
+    print(valid_data)
 
