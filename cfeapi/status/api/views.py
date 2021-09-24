@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from status.models import Status
@@ -18,7 +18,7 @@ class StatusListSearchAPIView(APIView):
         serializer = StatusSerializer(qs,many=True)
         return Response(serializer.data)
 
-class StatusAPIView(generics.ListAPIView):
+class StatusAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     permission_classes = []
     authentication_classes = []
     serializer_class = StatusSerializer
@@ -30,32 +30,19 @@ class StatusAPIView(generics.ListAPIView):
             qs = qs.filter(content__icontains=query)
         return qs
 
-class StatusCreateAPIView(generics.CreateAPIView):
+    def post(self,request,*args,**kwargs):
+        return self.create(request,*args,**kwargs)
+
+class StatusDetailAPIView(mixins.DestroyModelMixin, mixins.UpdateModelMixin, generics.RetrieveAPIView):
     permission_classes = []
     authentication_classes = []
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
-class StatusDetailAPIView(generics.RetrieveAPIView):
-    permission_classes = []
-    authentication_classes = []
-    queryset = Status.objects.all()
-    serializer_class = StatusSerializer
-    #lookup_field = 'id'
+    def put(self,request,*args,**kwargs):
+        return self.update(request,*args,**kwargs)
 
-    # def get_object(self,*args,**kwargs):
-    #     kwargs = self.kwargs
-    #     kw_id = kwargs.get('id')
-    #     return Status.objects.get(id=kw_id)
+    def delete(self,request,*args,**kwargs):
+        return self.destroy(request,*args,**kwargs)
 
-class StatusUpdateAPIView(generics.UpdateAPIView):
-    permission_classes = []
-    authentication_classes = []
-    queryset = Status.objects.all()
-    serializer_class = StatusSerializer
 
-class StatusDeleteAPIView(generics.DestroyAPIView):
-    permission_classes = []
-    authentication_classes = []
-    queryset = Status.objects.all()
-    serializer_class = StatusSerializer
