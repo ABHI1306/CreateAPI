@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'updates',
     'rest_framework',
     'status',
+    'accounts',
 ]
 
 MIDDLEWARE = [
