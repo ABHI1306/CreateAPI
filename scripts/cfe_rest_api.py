@@ -2,7 +2,7 @@ import os
 import json
 import requests
 
-AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/jwt/"
+AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/"
 REFRESH_ENDPOINT = AUTH_ENDPOINT + "refresh/"
 ENDPOINT = "http://127.0.0.1:8000/api/status/"
 image_path = os.path.join(os.getcwd(),"OIP1.jpg")
@@ -15,7 +15,8 @@ data = {
 }
 
 r = requests.post(AUTH_ENDPOINT, data=json.dumps(data), headers=headers)
-token = r.json()['token']
+token = r.json()#['token']
+print(token)
 
 # refresh_data = {
 #     'token': token
@@ -24,35 +25,37 @@ token = r.json()['token']
 # new_token = r.json()
 # print(new_token)
 
-headers = {
-    #'Content-Type':'application/json',
-    'Authorization': "JWT " + token,
-}
+# headers = {
+#     #'Content-Type':'application/json',
+#     'Authorization': "JWT " + token,
+# }
 
-with open(image_path,'rb') as image:
-    file_data = {
-                'image':image
-    }
-    data = {
-        "user": 1,
-        "content": "Updated latest content"
-    }
-    json_data = json.dumps(data)
-    posted_response = requests.put(ENDPOINT + str(11) + "/", data=data, headers=headers, files=file_data)
-    print(posted_response.text)
+# with open(image_path,'rb') as image:
+#     file_data = {
+#                 'image':image
+#     }
+#     data = {
+#         "user": 1,
+#         "content": "Updated latest content"
+#     }
+#     json_data = json.dumps(data)
+#     posted_response = requests.put(ENDPOINT + str(11) + "/", data=data, headers=headers, files=file_data)
+#     print(posted_response.text)
 
-headers = {
-    #'Content-Type':'application/json',
-    'Authorization': "JWT " + token,
-}
+# headers = {
+#     #'Content-Type':'application/json',
+#     'Authorization': "JWT " + token,
+# }
 
-data = {
-    "user": 1,
-    "content": "Updated latest content"
-}
-json_data = json.dumps(data)
-posted_response = requests.put(ENDPOINT + str(11) + "/", data=data, headers=headers, files=file_data)
-print(posted_response.text)
+# data = {
+#     "user": 1,
+#     "content": "Updated latest content"
+# }
+# json_data = json.dumps(data)
+# posted_response = requests.put(ENDPOINT + str(11) + "/", data=data, headers=headers)
+# print(posted_response.text)
+
+
 
 #get_endpoint = ENDPOINT + str(10)
 
