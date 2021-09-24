@@ -5,6 +5,24 @@ import requests
 ENDPOINT = "http://127.0.0.1:8000/api/status/"
 image_path = os.path.join(os.getcwd(),"OIP1.jpg")
 
+get_endpoint = ENDPOINT + str(10)
+post_data = json.dumps({"content": "Some random content"})
+
+r = requests.get(get_endpoint)
+print(r.text)
+
+r2 = requests.get(get_endpoint)
+print(r2.status_code)
+
+post_headers = {
+    'content-type': 'application/json'
+}
+
+post_response = requests.post(ENDPOINT, data=post_data, headers=post_headers)
+print(post_response.text)
+
+
+
 # def do_img(method='get', data={}, is_json=True, img_path=None):
 #     headers = {}
 #     if is_json:
