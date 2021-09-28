@@ -11,10 +11,10 @@ headers = {
     #'Authorization': "JWT " + token,
 }
 data = {
-    'username': 'abhijit',
-    'email': 'abhijit@gmail.com',
-    'password': 'abhijitabhijit',
-    'password2': 'abhijitabhijit'
+    'username': 'abhijitshete13',
+    'email': 'abhijitshete13@gmail.com',
+    'password': 'abhijitshete13',
+    'password2': 'abhijitshete13'
 }
 
 r = requests.post(AUTH_ENDPOINT, data=json.dumps(data), headers=headers)
